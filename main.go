@@ -4,6 +4,7 @@ import (
 	"log"
 	"math/rand"
 	"net/http"
+	"strconv"
 	"time"
 )
 
@@ -36,10 +37,12 @@ func slow(w http.ResponseWriter, r *http.Request) {
 	// 128Kb reply
 	b := randBytes(128 * 1024)
 
-	// Delay request for for minDelay...maxDelay ms
+	// Delay request for minDelay...maxDelay ms
 	delay := time.Duration(minDelayMS+rand.Intn(maxDelayMS-minDelayMS)) * time.Millisecond
 	time.Sleep(delay)
 
+	// Always set content length
+	w.Header().Set("Content-Length", strconv.Itoa(len(b)))
 	_, err := w.Write(b)
 
 	if err != nil {
